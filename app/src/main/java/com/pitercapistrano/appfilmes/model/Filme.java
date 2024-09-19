@@ -2,22 +2,18 @@ package com.pitercapistrano.appfilmes.model;
 
 public class Filme {
 
-    private int capa;
+    private String capa;
     private String titulo;
     private String descricao;
     private String elenco;
     private String video;
 
-    public Filme( int capa, String titulo) {
-        this.capa = capa;
-        this.titulo = titulo;
-    }
 
-    public int getCapa() {
+    public String getCapa() {
         return capa;
     }
 
-    public void setCapa(int capa) {
+    public void setCapa(String capa) {
         this.capa = capa;
     }
 

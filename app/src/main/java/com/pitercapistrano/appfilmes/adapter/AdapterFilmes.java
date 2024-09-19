@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.pitercapistrano.appfilmes.R;
 import com.pitercapistrano.appfilmes.model.Filme;
 
@@ -38,7 +40,7 @@ public class AdapterFilmes extends RecyclerView.Adapter<AdapterFilmes.FilmeViewH
 
     @Override
     public void onBindViewHolder(@NonNull FilmeViewHolder holder, int position) {
-        holder.capa.setImageResource(filmeList.get(position).getCapa());
+        Glide.with(context).load(filmeList.get(position).getCapa()).into(holder.capa);
         holder.titulo.setText(filmeList.get(position).getTitulo());
     }
 

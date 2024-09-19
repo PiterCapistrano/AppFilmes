@@ -1,6 +1,8 @@
 package com.pitercapistrano.appfilmes;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pitercapistrano.appfilmes.adapter.AdapterFilmes;
 import com.pitercapistrano.appfilmes.model.Filme;
+import com.pitercapistrano.appfilmes.model.FilmeApi;
+import com.pitercapistrano.appfilmes.onclick.RecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,31 +46,64 @@ public class MainActivity extends AppCompatActivity {
         IniciarComponentes();
 
         filmeList = new ArrayList<>();
-        adapterFilme = new AdapterFilmes(getApplicationContext(), filmeList);
-        recyclerViewFilmes.setLayoutManager(new GridLayoutManager(getApplicationContext(),2));
-        recyclerViewFilmes.setHasFixedSize(true);
-        recyclerViewFilmes.setAdapter(adapterFilme);
 
-        Filme filme1 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme1);
+        //Eventos de Click da Recycler View
+        recyclerViewFilmes.addOnItemTouchListener(new RecyclerItemClickListener(
+                getApplicationContext(),
+                recyclerViewFilmes,
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
 
-        Filme filme2 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme2);
+                    }
 
-        Filme filme3 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme3);
+                    @Override
+                    public void onLongItemClick(View view, int position) {
 
-        Filme filme4 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme4);
+                    }
 
-        Filme filme5 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme5);
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Filme filme6 = new Filme(R.drawable.ic_launcher_background, "Titanic");
-        filmeList.add(filme6);
+                    }
+                }
+        ));
+
+        //Configurar retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://firebasestorage.googleapis.com/v0/b/appdelivery-ddd36.appspot.com/o/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+
+        // Iniciar a retrofit
+        FilmeApi filmeApi = retrofit.create(FilmeApi.class);
+        Call<List<Filme>> call = filmeApi.getFilmes();
+        call.enqueue(new Callback<List<Filme>>() {
+            @Override
+            public void onResponse(Call<List<Filme>> call, Response<List<Filme>> response) {
+                if (response.code() != 200){
+                    return;
+                }
+                List<Filme> filmes = response.body();
+
+                for (Filme filme : filmes){
+                    filmeList.add(filme);
+                }
+                adapterFilme = new AdapterFilmes(getApplicationContext(), filmeList);
+                recyclerViewFilmes.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                recyclerViewFilmes.setHasFixedSize(true);
+                recyclerViewFilmes.setAdapter(adapterFilme);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Filme>> call, Throwable t) {
+
+            }
+        });
     }
 
     public void IniciarComponentes(){
         recyclerViewFilmes = findViewById(R.id.recycler_view_filmes);
+
     }
 }
