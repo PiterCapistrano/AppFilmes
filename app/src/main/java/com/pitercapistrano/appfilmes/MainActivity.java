@@ -1,5 +1,6 @@
 package com.pitercapistrano.appfilmes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,7 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-
+                        Intent intent = new Intent(getApplicationContext(), DetalhesFilme.class);
+                        intent.putExtra("capa",filmeList.get(position).getCapa());
+                        intent.putExtra("titulo",filmeList.get(position).getTitulo());
+                        intent.putExtra("descricao",filmeList.get(position).getDescricao());
+                        intent.putExtra("elenco",filmeList.get(position).getElenco());
+                        intent.putExtra("video",filmeList.get(position).getVideo());
+                        startActivity(intent);
                     }
 
                     @Override
